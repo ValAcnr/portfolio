@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Démo Score Algo — Valentin Arcanger</title>
+<meta name="description" content="Démo interactive d'Octagon Studio : Score Algo, recommandations et résumé envoyé à Claude, sur des données fictives.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/style.css">
+<script src="assets/theme.js"></script>
+<script src="assets/demo.js" defer></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="index.html"><b class="full">Valentin Arcanger</b><b class="short">V. Arcanger</b> <span>· IA &amp; automatisation</span></a>
+    <nav class="nav" aria-label="Navigation principale">
+      <a href="index.html#projets">Projets</a>
+      <a href="demo.html" aria-current="page">Démo</a>
+      <a class="hide-sm" href="index.html#methode">Méthode</a>
+      <a href="index.html#contact">Contact</a>
+    </nav>
+    <button class="theme-btn" type="button" aria-label="Changer de thème"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/></svg></button>
+  </div>
+</header>
+
+<main>
+  <section class="hero" style="padding-bottom:24px">
+    <div class="wrap">
+      <span class="eyebrow">Démo interactive · Octagon Studio</span>
+      <h1>Des statistiques TikTok aux décisions, en direct</h1>
+      <p class="lead">28 vidéos d'un club de démonstration, entièrement inventées. Changez l'importance de chaque signal : le Score Algo, le classement et les recommandations se recalculent dans votre navigateur. Le dernier onglet montre le résumé exact que Claude recevrait.</p>
+      <div class="stats">
+        <div class="stat"><b id="k-videos">–</b><span>vidéos analysées</span></div>
+        <div class="stat"><b id="k-views">–</b><span>vues au total</span></div>
+        <div class="stat"><b id="k-followers">–</b><span>abonnés gagnés</span></div>
+        <div class="stat"><b id="k-engagement">–</b><span>taux d'engagement médian</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-top:8px">
+    <div class="wrap">
+      <div class="demo-grid">
+        <aside class="panel">
+          <h3>Pondérations du Score Algo</h3>
+          <p class="small muted">50 = une vidéo normale pour ce compte. Chaque signal est comparé à la médiane du compte, puis pondéré.</p>
+          <div class="weights" id="weights"></div>
+          <button class="btn btn-small" id="reset" type="button">Revenir aux pondérations par défaut</button>
+        </aside>
+
+        <div>
+          <div class="tabs" role="tablist" aria-label="Vues de la démo">
+            <button role="tab" id="t-recos" aria-controls="p-recos" aria-selected="true">Recommandations</button>
+            <button role="tab" id="t-videos" aria-controls="p-videos" aria-selected="false">Classement des vidéos</button>
+            <button role="tab" id="t-claude" aria-controls="p-claude" aria-selected="false">Ce que reçoit Claude</button>
+          </div>
+
+          <div class="tabpanel" role="tabpanel" id="p-recos" aria-labelledby="t-recos">
+            <p class="small muted">Trois des 14 règles de l'outil. Chacune ne se déclenche que si l'écart est net et l'échantillon suffisant.</p>
+            <div class="recos" id="recos"></div>
+          </div>
+
+          <div class="tabpanel" role="tabpanel" id="p-videos" aria-labelledby="t-videos" hidden>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th class="num">#</th><th>Vidéo</th><th>Pilier</th><th>Durée</th><th>Sous-titres</th><th>Publication</th><th class="num">Vues</th><th class="num">Rétention</th><th class="num">Score</th></tr></thead>
+                <tbody id="rows"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="tabpanel" role="tabpanel" id="p-claude" aria-labelledby="t-claude" hidden>
+            <p class="small">Dans l'outil, Claude rédige l'analyse à partir de ce résumé. Il ne reçoit aucune donnée brute et ne calcule aucun chiffre : tout ce qui suit est produit par le code.</p>
+            <pre class="code json" id="digest"></pre>
+            <h3 style="margin-top:20px">Texte de repli, sans IA</h3>
+            <p class="small muted">Cette page n'appelle pas l'API de Claude. Voici ce que l'outil affiche quand l'IA n'est pas disponible : le même contenu, mis en phrases par des règles.</p>
+            <pre class="code" id="fallback" style="white-space:pre-wrap"></pre>
+          </div>
+        </div>
+      </div>
+
+      <p class="note" style="margin-top:28px"><strong>Ce qui est fidèle, ce qui est simplifié.</strong> Les formules du Score Algo et les seuils des trois règles sont ceux de l'outil. La règle du meilleur créneau est simplifiée. Les vidéos, le club et les coachs sont fictifs, générés pour la démo.</p>
+      <div class="case-nav" style="margin-top:24px">
+        <a href="octagon.html">← Étude de cas Octagon Studio</a>
+        <a href="index.html#projets">Tous les projets →</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">Démo sans appel réseau : tout est calculé dans votre navigateur, sur des données inventées.</div>
+</footer>
+</body>
+</html>

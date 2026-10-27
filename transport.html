@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plateforme transport et MCP — Valentin Arcanger</title>
+<meta name="description" content="Étude de cas : la plateforme d'exploitation d'une PME de transport routier et son serveur MCP RH.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/style.css">
+<script src="assets/theme.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="index.html"><b class="full">Valentin Arcanger</b><b class="short">V. Arcanger</b> <span>· IA &amp; automatisation</span></a>
+    <nav class="nav" aria-label="Navigation principale">
+      <a href="index.html#projets" aria-current="page">Projets</a>
+      <a href="demo.html">Démo</a>
+      <a class="hide-sm" href="index.html#methode">Méthode</a>
+      <a href="index.html#contact">Contact</a>
+    </nav>
+    <button class="theme-btn" type="button" aria-label="Changer de thème"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/></svg></button>
+  </div>
+</header>
+
+<main class="case">
+  <div class="wrap">
+    <div class="case-hero">
+      <span class="eyebrow">Étude de cas 1 · projet principal</span>
+      <h1>Plateforme d'exploitation d'une PME de transport, et son serveur MCP RH</h1>
+      <p class="lead">Une PME de transport routier (~100 salariés) gérait ses tournées, ses intérimaires et sa paie dans des classeurs Excel ressaisis à la main. Je lui ai construit une plateforme web, en production depuis juin 2026, et un connecteur MCP qui ouvre son SIRH à Claude.</p>
+      <div class="tags"><span class="tag status">En production</span><span class="tag ai">Connecteur MCP</span><span class="tag">Automatisation</span><span class="tag">Node.js</span><span class="tag">Python</span><span class="tag">Docker</span></div>
+      <dl class="facts">
+        <div><dt>Rôle</dt><dd>Conception, développement, déploiement</dd></div>
+        <div><dt>Période</dt><dd>Juin 2026 → aujourd'hui</dd></div>
+        <div><dt>Utilisateurs</dt><dd>22 comptes, 5 rôles</dd></div>
+        <div><dt>Cadre</dt><dd>Mission pour l'entreprise</dd></div>
+      </dl>
+      <nav class="toc" aria-label="Sommaire">
+        <a href="#probleme">Problème</a><a href="#construit">Construit</a><a href="#architecture">Architecture</a><a href="#code">Code</a><a href="#resultat">Résultat</a><a href="#appris">Appris</a>
+      </nav>
+    </div>
+  </div>
+
+  <section id="probleme">
+    <div class="wrap prose">
+      <h2><span class="n">01</span>Le problème métier</h2>
+      <p>Chaque jour, des dizaines de tournées partent avec un chauffeur et un véhicule. L'information était éparpillée : un classeur Excel par mois pour les tournées, des feuilles d'heures d'intérimaires sur papier, des heures supplémentaires recopiées pour la paie, des contrôles véhicules sans suivi. Les premiers outils automatisés étaient des workflows n8n, devenus fragiles.</p>
+      <ul>
+        <li><b>Ressaisie</b> : la même information tapée deux ou trois fois, dans des fichiers différents.</li>
+        <li><b>Erreurs qui coûtent cher</b> : une heure mal recopiée se retrouve sur la fiche de paie ou la facture d'une agence d'intérim.</li>
+        <li><b>Aucune vue d'ensemble</b> : savoir qui est absent, quelle tournée n'est pas couverte, quel véhicule n'a pas été contrôlé demandait d'ouvrir plusieurs outils.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="construit">
+    <div class="wrap">
+      <h2><span class="n">02</span>Ce que j'ai construit</h2>
+      <div class="split">
+        <div class="prose">
+          <h3>La plateforme</h3>
+          <ul>
+            <li><b>Saisie des tournées</b> sur mobile, avec contrôles côté serveur : chauffeur et plaque obligatoires, plaque vérifiée contre le registre des véhicules, relais matin et après-midi.</li>
+            <li><b>Feuilles d'heures d'intérimaires</b> signées sur téléphone, horodatées, puis récapitulatif hebdomadaire préparé pour chaque agence d'intérim.</li>
+            <li><b>Heures supplémentaires → récap paie</b> : un seul calcul fait foi, réutilisé par l'export Excel.</li>
+            <li><b>Véhicules</b> : contrôles, signalements de défauts vers l'atelier, cuves de carburant.</li>
+            <li><b>Congés croisés avec le planning</b> : qui est absent, quelles tournées sont à couvrir.</li>
+            <li><b>16 tâches planifiées</b> : alerte si une tournée n'est pas saisie, contrôle GPS des tournées, rappels de congés obligatoires.</li>
+          </ul>
+        </div>
+        <div class="prose">
+          <h3>Le serveur MCP RH</h3>
+          <p>Un serveur <a href="https://modelcontextprotocol.io" rel="noopener">Model Context Protocol</a> expose le SIRH de l'entreprise en lecture seule à travers <b>11 outils</b> : salariés, absences, soldes de congés, feuilles de temps, planning. Deux clients l'utilisent : la plateforme, pour le planning des congés, et Claude, pour répondre en langage naturel à des questions RH.</p>
+          <h3>Son authentification (octobre 2026)</h3>
+          <ul>
+            <li><b>Jeton de service</b> pour la plateforme, comparé en temps constant.</li>
+            <li><b>OAuth 2.1 avec PKCE (S256) obligatoire</b> pour Claude : code à usage unique valable 5 minutes, adresses de retour limitées aux domaines de Claude.</li>
+            <li><b>Jetons hachés</b> : seule leur empreinte SHA-256 est stockée, et le jeton de rafraîchissement change à chaque usage.</li>
+            <li><b>Anti-force brute</b> : blocage après 5 échecs par adresse et 20 au total en 15 minutes.</li>
+            <li><b>Pas de démarrage ouvert</b> : sans secret configuré, le serveur refuse de démarrer. 25 tests automatisés.</li>
+          </ul>
+        </div>
+      </div>
+      <p class="note"><strong>Où est l'IA ?</strong> La plateforme elle-même n'appelle pas de modèle de langage : c'est de l'automatisation. L'IA intervient à deux endroits : le connecteur MCP, qui donne à Claude un accès contrôlé aux données RH, et la façon de développer, avec Claude Code comme agent (488 commits co-signés).</p>
+    </div>
+  </section>
+
+  <section id="architecture">
+    <div class="wrap">
+      <h2><span class="n">03</span>Architecture</h2>
+      <figure>
+        <div class="diagram">
+          <svg viewBox="0 0 900 440" role="img" aria-labelledby="arch-t arch-d">
+            <title id="arch-t">Architecture de la plateforme</title>
+            <desc id="arch-d">Les utilisateurs métier accèdent à la plateforme, qui lit et écrit dans les classeurs Excel, la GED et l'API GPS, et interroge le SIRH via le serveur MCP. Claude accède aussi au serveur MCP via OAuth.</desc>
+            <defs>
+              <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="head" d="M0 0 L10 5 L0 10 z"/></marker>
+              <marker id="aha" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="head-accent" d="M0 0 L10 5 L0 10 z"/></marker>
+            </defs>
+
+            <text x="20" y="28" class="t-muted">UTILISATEURS</text>
+            <rect class="box" x="20" y="44" width="170" height="48" rx="8"/><text x="34" y="66" class="t-head">Vérificateurs terrain</text><text x="34" y="83" class="t-muted">téléphone, PWA</text>
+            <rect class="box" x="20" y="104" width="170" height="48" rx="8"/><text x="34" y="126" class="t-head">RH et paie</text><text x="34" y="143" class="t-muted">récap, signatures</text>
+            <rect class="box" x="20" y="164" width="170" height="48" rx="8"/><text x="34" y="186" class="t-head">Direction</text><text x="34" y="203" class="t-muted">suivi, alertes</text>
+            <rect class="box" x="20" y="224" width="170" height="48" rx="8"/><text x="34" y="246" class="t-head">Atelier</text><text x="34" y="263" class="t-muted">signalements</text>
+
+            <path class="arrow" d="M190 68 H258" marker-end="url(#ah)"/>
+            <path class="arrow" d="M190 128 H258" marker-end="url(#ah)"/>
+            <path class="arrow" d="M190 188 H258" marker-end="url(#ah)"/>
+            <path class="arrow" d="M190 248 H258" marker-end="url(#ah)"/>
+
+            <rect class="box-accent" x="260" y="36" width="340" height="300" rx="10"/>
+            <text x="280" y="62" class="t-head">Plateforme d'exploitation</text>
+            <text x="280" y="79" class="t-muted">Node.js / Express · 174 routes · rôles par module</text>
+            <rect class="box" x="280" y="94" width="145" height="40" rx="6"/><text x="292" y="119">Tournées</text>
+            <rect class="box" x="437" y="94" width="145" height="40" rx="6"/><text x="449" y="119">Feuilles d'heures</text>
+            <rect class="box" x="280" y="144" width="145" height="40" rx="6"/><text x="292" y="169">Heures sup → paie</text>
+            <rect class="box" x="437" y="144" width="145" height="40" rx="6"/><text x="449" y="169">Véhicules, cuves</text>
+            <rect class="box" x="280" y="194" width="145" height="40" rx="6"/><text x="292" y="219">Congés × planning</text>
+            <rect class="box" x="437" y="194" width="145" height="40" rx="6"/><text x="449" y="219">Signalements</text>
+            <rect class="box" x="280" y="260" width="302" height="56" rx="6"/><text x="292" y="284" class="t-head">16 tâches planifiées</text><text x="292" y="302" class="t-muted">contrôles quotidiens → alertes mail</text>
+
+            <text x="670" y="28" class="t-muted">SYSTÈMES</text>
+            <rect class="box" x="670" y="44" width="210" height="44" rx="8"/><text x="684" y="71">Classeurs Excel maîtres</text>
+            <rect class="box" x="670" y="100" width="210" height="44" rx="8"/><text x="684" y="127">GED (SharePoint, Graph)</text>
+            <rect class="box" x="670" y="156" width="210" height="44" rx="8"/><text x="684" y="183">API GPS de la flotte</text>
+            <rect class="box-accent" x="670" y="226" width="210" height="56" rx="8"/><text x="684" y="250" class="t-head">Serveur MCP RH</text><text x="684" y="268" class="t-muted">11 outils · lecture seule</text>
+            <rect class="box" x="670" y="330" width="210" height="44" rx="8"/><text x="684" y="357">SIRH de l'entreprise</text>
+
+            <path class="arrow" d="M602 66 H668" marker-start="url(#ah)" marker-end="url(#ah)"/>
+            <path class="arrow" d="M602 122 H668" marker-end="url(#ah)"/>
+            <path class="arrow" d="M602 178 H668" marker-end="url(#ah)"/>
+            <path class="arrow-accent" d="M602 254 H668" marker-end="url(#aha)"/>
+            <text x="606" y="246" class="t-muted">jeton</text>
+            <path class="arrow" d="M775 282 V328" marker-end="url(#ah)"/>
+
+            <rect class="box" x="380" y="376" width="220" height="48" rx="8"/><text x="394" y="398" class="t-head">Claude (connecteur)</text><text x="394" y="415" class="t-muted">questions RH en langage naturel</text>
+            <path class="arrow-accent" d="M600 400 H640 V268 H668" marker-end="url(#aha)"/>
+            <text x="606" y="392" class="t-muted">OAuth + PKCE</text>
+          </svg>
+        </div>
+        <figcaption>Les données restent dans les systèmes de l'entreprise : la plateforme les lit et les écrit, le serveur MCP n'expose le SIRH qu'en lecture.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section id="code">
+    <div class="wrap">
+      <h2><span class="n">04</span>Extraits de code</h2>
+      <div class="prose">
+        <p>Deux extraits courts. Le premier vient d'un incident réel : renvoyer une journée de tournées avec une seule ligne remplie effaçait les autres sans prévenir. Les saisies ont été restaurées, puis le serveur a reçu ce contrôle.</p>
+      </div>
+      <div class="code-head"><span>Plateforme · route d'enregistrement d'une journée de tournées</span><span>JavaScript</span></div>
+<pre class="code"><code><span class="c">// Effacement partiel : l'envoi ne couvre pas des tournées déjà saisies.</span>
+<span class="c">// Un envoi remplace la journée entière ; sans ce contrôle, renvoyer une</span>
+<span class="c">// journée avec une seule tournée renseignée efface les autres sans le dire.</span>
+<span class="k">if</span> (!b.confirme_suppression) {
+  <span class="k">const</span> eff = tournees.detecterEffacement(id, b.date, b.rows);
+  <span class="k">if</span> (eff) {
+    <span class="k">return</span> refuser(409, { ok: <span class="k">false</span>, code: <span class="s">'effacement_partiel'</span>,
+                         error: eff.message, tournees: eff.tournees });
+  }
+}</code></pre>
+
+      <div class="code-head"><span>Serveur MCP · échange du code OAuth contre un jeton</span><span>JavaScript</span></div>
+<pre class="code"><code><span class="k">const</span> cle = sha256(p.code || <span class="s">""</span>);
+<span class="k">const</span> entree = codes.get(cle);
+codes.delete(cle); <span class="c">// usage unique, même en cas d'échec</span>
+<span class="k">const</span> verifie = entree &amp;&amp; entree.expire &gt; Date.now()
+  &amp;&amp; entree.clientId === p.client_id
+  &amp;&amp; entree.redirectUri === p.redirect_uri
+  &amp;&amp; p.code_verifier
+  &amp;&amp; egal(crypto.createHash(<span class="s">"sha256"</span>).update(p.code_verifier).digest(<span class="s">"base64url"</span>),
+          entree.challenge);   <span class="c">// PKCE S256, comparaison en temps constant</span>
+<span class="k">if</span> (!verifie) { json(res, 400, { error: <span class="s">"invalid_grant"</span> }); <span class="k">return true</span>; }
+json(res, 200, delivrer(entree.clientId)); <span class="c">// jetons stockés sous forme d'empreinte</span></code></pre>
+    </div>
+  </section>
+
+  <section id="resultat">
+    <div class="wrap">
+      <h2><span class="n">05</span>Résultat mesuré</h2>
+      <div class="results">
+        <div class="stat"><b>794</b><span>saisies de tournées depuis le 01/07/2026</span></div>
+        <div class="stat"><b>266</b><span>feuilles d'heures d'intérimaires signées sur mobile</span></div>
+        <div class="stat"><b>22</b><span>comptes métier, sur 5 rôles</span></div>
+        <div class="stat"><b>~100</b><span>alertes automatiques envoyées et journalisées (78 GPS, 22 tournées non saisies)</span></div>
+        <div class="stat"><b>8 163</b><span>appels au serveur MCP en 87 jours, jusqu'à 268 par jour</span></div>
+        <div class="stat"><b>93</b><span>PR fusionnées, 82 scripts de test, 707 commits</span></div>
+      </div>
+      <p class="estimate"><strong>Estimation :</strong> 5 à 10 h par semaine de ressaisie et de vérifications manuelles évitées. C'est un ordre de grandeur tiré de l'usage, pas une mesure avant/après.</p>
+      <p class="note">Chiffres relevés le 27/10/2026 dans l'historique git, les journaux de la plateforme et du serveur MCP, et la base de données. Aucune donnée réelle n'est montrée sur ce site.</p>
+    </div>
+  </section>
+
+  <section id="appris">
+    <div class="wrap prose">
+      <h2><span class="n">06</span>Ce que j'ai appris</h2>
+      <ul>
+        <li><b>Un garde-fou côté serveur vaut mieux qu'une consigne.</b> Le formulaire empêchait déjà la plupart des erreurs ; c'est le contrôle serveur qui protège contre le formulaire resté en cache sur un téléphone.</li>
+        <li><b>Un calcul qui fait foi doit vivre à un seul endroit.</b> Les heures supplémentaires sont calculées par un seul module, que la page, le récap et l'export réutilisent. Deux copies finissent toujours par diverger, et c'est la paie qui le paie.</li>
+        <li><b>L'ordre de déploiement fait partie de la solution.</b> Pour sécuriser le serveur MCP sans coupure, la plateforme a d'abord envoyé son jeton, puis le serveur a commencé à l'exiger. Ensuite, vérification en production : refus sans jeton, congés toujours chargés.</li>
+        <li><b>L'adoption se joue sur le téléphone.</b> Les vérificateurs saisissent sur le terrain : chaque écran est pensé pour le mobile, et chaque rôle ne voit que ce qui le concerne.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap case-nav">
+      <a href="index.html#projets">← Tous les projets</a>
+      <a href="prospection.html">Agent de prospection →</a>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">Client anonymisé. Aucune donnée réelle, aucun nom, aucune adresse de serveur. Extraits de code courts, choisis ; le dépôt reste privé.</div>
+</footer>
+</body>
+</html>

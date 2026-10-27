@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Valentin Arcanger — Outils IA en production</title>
+<meta name="description" content="Je conçois des outils d'IA et d'automatisation que des équipes métier utilisent tous les jours, et je mesure ce qu'ils changent.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/style.css">
+<script src="assets/theme.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="index.html"><b class="full">Valentin Arcanger</b><b class="short">V. Arcanger</b> <span>· IA &amp; automatisation</span></a>
+    <nav class="nav" aria-label="Navigation principale">
+      <a href="#projets">Projets</a>
+      <a href="demo.html">Démo</a>
+      <a class="hide-sm" href="#methode">Méthode</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <button class="theme-btn" type="button" aria-label="Changer de thème"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/></svg></button>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <span class="eyebrow">Étudiant BBA · INSEEC · cofondateur d'Evolvia</span>
+      <h1>Je construis des outils d'IA que des équipes utilisent vraiment.</h1>
+      <p class="lead">Depuis juin 2026, je conçois, déploie et fais évoluer la plateforme d'exploitation d'une PME de transport routier (~100 salariés), branchée à son SIRH par un connecteur MCP. Elle est utilisée au quotidien par l'exploitation, la RH et la paie.</p>
+      <div class="hero-actions">
+        <a class="btn primary" href="transport.html">Voir l'étude de cas principale</a>
+        <a class="btn" href="demo.html">Essayer la démo</a>
+      </div>
+
+      <div class="stats" aria-label="Chiffres vérifiés">
+        <div class="stat"><b>4 mois</b><span>en production, depuis le 26/06/2026</span></div>
+        <div class="stat"><b>22 comptes</b><span>métier sur 5 rôles : vérificateurs terrain, RH, direction, administration, atelier</span></div>
+        <div class="stat"><b>1 060</b><span>saisies faites sur mobile : 794 tournées et 266 feuilles d'heures signées</span></div>
+        <div class="stat"><b>8 163</b><span>appels au connecteur MCP en 87 jours, par la plateforme et par Claude</span></div>
+      </div>
+      <p class="estimate"><strong>Estimation :</strong> 5 à 10 h par semaine de ressaisie et de vérifications manuelles évitées pour l'entreprise de transport. Ordre de grandeur donné par l'usage, pas une mesure.</p>
+    </div>
+  </section>
+
+  <section id="projets">
+    <div class="wrap">
+      <span class="eyebrow">Projets</span>
+      <h2>Quatre projets, du plus abouti au plus récent</h2>
+      <p class="lead">Chaque étude de cas suit la même trame : le problème métier, ce que j'ai construit, l'architecture, un extrait de code, le résultat mesuré et ce que j'en retiens.</p>
+
+      <div class="projects">
+        <a class="card main" href="transport.html">
+          <div class="tags"><span class="tag status">En production depuis juin 2026</span><span class="tag ai">Connecteur MCP</span><span class="tag">Automatisation</span><span class="tag">Node.js · Python</span></div>
+          <h3>Plateforme d'exploitation d'une PME de transport + serveur MCP RH</h3>
+          <p>Saisie des tournées, feuilles d'heures signées sur mobile, récap paie, contrôles véhicules et alertes automatiques. Un serveur MCP expose le SIRH à la plateforme et à Claude, avec une authentification OAuth que j'ai mise en place.</p>
+          <div class="card-figures"><span><b>707</b> commits</span><span><b>93</b> PR fusionnées</span><span><b>16</b> tâches planifiées</span><span><b>11</b> outils MCP</span></div>
+          <span class="more">Lire l'étude de cas →</span>
+        </a>
+
+        <a class="card" href="prospection.html">
+          <div class="tags"><span class="tag status">En pause depuis le 29/09</span><span class="tag ai">Agent LLM</span><span class="tag">Humain dans la boucle</span></div>
+          <h3>Agent de prospection Evolvia</h3>
+          <p>Trouve des PME, lit leur site, relève des signaux sourcés, les qualifie avec Claude et rédige une approche. Aucun envoi sans validation humaine, verrouillé jusque dans la base de données.</p>
+          <div class="card-figures"><span><b>60</b> entreprises</span><span><b>68</b> appels LLM réussis</span><span><b>93</b> tests</span></div>
+          <span class="more">Lire l'étude de cas →</span>
+        </a>
+
+        <a class="card" href="octagon.html">
+          <div class="tags"><span class="tag status">En discussion avec un club</span><span class="tag ai">Claude rédige l'analyse</span><span class="tag">KPI contenu</span></div>
+          <h3>Octagon Studio</h3>
+          <p>Outil de stratégie TikTok et Reels pour un club de sports de combat : KPI, Score Algo normalisé, 14 règles de recommandation et une analyse rédigée par Claude. Pas encore utilisé par le club.</p>
+          <div class="card-figures"><span><b>14</b> règles</span><span><b>134</b> tests</span><span>démo interactive</span></div>
+          <span class="more">Lire l'étude de cas →</span>
+        </a>
+
+        <a class="card" href="evolvia-hub.html">
+          <div class="tags"><span class="tag status">Projet d'équipe</span><span class="tag ai">Agents · MCP</span><span class="tag">Postgres · pgvector</span></div>
+          <h3>Evolvia Hub</h3>
+          <p>Le hub interne d'Evolvia, développé avec mes associés : missions confiées à des agents IA, revue humaine systématique. Ma part : la conception du module Prospection.</p>
+          <div class="card-figures"><span><b>2</b> PR de conception</span><span>reprises par un associé</span></div>
+          <span class="more">Lire l'étude de cas →</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section id="methode">
+    <div class="wrap">
+      <span class="eyebrow">Comment je travaille</span>
+      <h2>Diagnostiquer, prototyper, déployer, faire adopter, mesurer</h2>
+      <p class="lead">La même boucle sur chaque projet. Les exemples viennent tous de la plateforme transport, sauf mention contraire.</p>
+      <div class="steps">
+        <div class="step"><h3>Diagnostiquer</h3><p>Partir de ce qui existe : classeurs Excel ressaisis chaque semaine, workflows n8n fragiles, papiers signés. Je liste qui saisit quoi, et où l'erreur coûte cher (la paie).</p></div>
+        <div class="step"><h3>Prototyper</h3><p>Une version autonome et petite d'abord. Le formulaire de signalement de défaut véhicule a d'abord existé comme application autonome, puis a été intégré à la plateforme.</p></div>
+        <div class="step"><h3>Déployer</h3><p>Une PR par changement, des tests garde-fous, et un ordre de mise en production pensé pour éviter la coupure : la plateforme envoie le jeton du MCP avant que le serveur ne l'exige.</p></div>
+        <div class="step"><h3>Faire adopter</h3><p>Des écrans par rôle, utilisables au téléphone sur le terrain. Un rôle en lecture seule pour la RH, un rôle atelier limité aux signalements. Chacun voit ce dont il a besoin.</p></div>
+        <div class="step"><h3>Mesurer</h3><p>Compteurs de tournées réalisées et oubliées, alerte chaque matin si une tournée n'est pas saisie, journal de chaque alerte envoyée. Ce qui n'est pas mesuré se dégrade sans bruit.</p></div>
+      </div>
+
+      <div class="split" style="margin-top:40px">
+        <div class="prose">
+          <h3>Avec Claude Code comme agent de développement</h3>
+          <p>Je travaille avec Claude Code comme on travaille avec un développeur : je fixe le besoin, les contraintes et les critères d'acceptation, il propose, je relis et je tranche. Sur la plateforme transport, <b>488 des 707 commits</b> sont co-signés avec Claude, toujours passés par une PR et des tests.</p>
+          <p>Ce qui fait la différence n'est pas l'outil mais le cadrage : des règles écrites dans le dépôt (une branche et une PR par changement, jamais de donnée réelle dans un test) et des tests qui protègent ce qui a déjà cassé une fois.</p>
+        </div>
+        <div class="prose">
+          <h3>Autres réalisations</h3>
+          <div class="others">
+            <div class="other">
+              <h3>PâtissArt</h3>
+              <p>Application de fiches techniques pour un ami pâtissier : génération des fiches par un LLM, coûts de revient et allergènes. J'ai repris une base faite avec Lovable et l'ai auto-hébergée (Supabase).</p>
+            </div>
+            <div class="other">
+              <h3>De n8n à une plateforme maison</h3>
+              <p>Les premiers outils de l'entreprise de transport étaient 8 workflows n8n. Quand ils sont devenus trop fragiles, je les ai remplacés progressivement par la plateforme ; il n'en reste qu'un actif.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="wrap split">
+      <div>
+        <span class="eyebrow">Contact</span>
+        <h2>Parlons de vos équipes</h2>
+        <p class="lead">Je cherche un stage de 6 mois à partir de janvier 2027 pour concevoir et déployer des agents IA auprès d'équipes métier.</p>
+      </div>
+      <ul class="contact-list">
+        <li><span class="k">Email</span><a href="mailto:valentin.arcanger@gmail.com">valentin.arcanger@gmail.com</a></li>
+        <li><span class="k">LinkedIn</span><span class="todo" data-todo="linkedin">[lien à fournir]</span></li>
+        <li><span class="k">CV</span><span class="todo" data-todo="cv">[PDF à fournir]</span></li>
+        <li><span class="k">Code</span><span class="muted">Dépôts privés (clients et associés) : extraits sur demande, en entretien.</span></li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">Les noms des clients sont anonymisés. Captures et démos sur données fictives uniquement. Chiffres relevés le 27/10/2026 dans le code, les journaux et les bases ; les estimations sont signalées comme telles.</div>
+</footer>
+</body>
+</html>

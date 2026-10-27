@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agent de prospection — Valentin Arcanger</title>
+<meta name="description" content="Étude de cas : un agent de prospection qui qualifie des PME avec Claude, sans jamais contacter personne sans validation humaine.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/style.css">
+<script src="assets/theme.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="index.html"><b class="full">Valentin Arcanger</b><b class="short">V. Arcanger</b> <span>· IA &amp; automatisation</span></a>
+    <nav class="nav" aria-label="Navigation principale">
+      <a href="index.html#projets" aria-current="page">Projets</a>
+      <a href="demo.html">Démo</a>
+      <a class="hide-sm" href="index.html#methode">Méthode</a>
+      <a href="index.html#contact">Contact</a>
+    </nav>
+    <button class="theme-btn" type="button" aria-label="Changer de thème"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/></svg></button>
+  </div>
+</header>
+
+<main class="case">
+  <div class="wrap">
+    <div class="case-hero">
+      <span class="eyebrow">Étude de cas 2</span>
+      <h1>Un agent de prospection qui ne contacte personne sans accord humain</h1>
+      <p class="lead">Pour Evolvia, j'ai construit un agent qui trouve des PME, lit leur site, relève des faits vérifiables, les qualifie avec Claude et rédige une première approche. Un humain valide chaque message. Le volume est resté faible, et l'agent est en pause depuis le 29/09.</p>
+      <div class="tags"><span class="tag status">En pause depuis le 29/09/2026</span><span class="tag ai">Agent LLM</span><span class="tag ai">Sorties structurées</span><span class="tag">Next.js</span><span class="tag">TypeScript</span><span class="tag">SQLite</span></div>
+      <dl class="facts">
+        <div><dt>Rôle</dt><dd>Conception et développement</dd></div>
+        <div><dt>Période</dt><dd>Septembre 2026</dd></div>
+        <div><dt>Utilisateurs</dt><dd>4 comptes</dd></div>
+        <div><dt>Cadre</dt><dd>Outil interne Evolvia</dd></div>
+      </dl>
+      <nav class="toc" aria-label="Sommaire">
+        <a href="#probleme">Problème</a><a href="#construit">Construit</a><a href="#architecture">Architecture</a><a href="#code">Code</a><a href="#resultat">Résultat</a><a href="#appris">Appris</a>
+      </nav>
+    </div>
+  </div>
+
+  <section id="probleme">
+    <div class="wrap prose">
+      <h2><span class="n">01</span>Le problème métier</h2>
+      <p>Une jeune agence doit trouver ses premiers clients. Chercher des PME à la main, lire leur site et écrire un message personnalisé prend beaucoup de temps pour chaque entreprise. Les outils qui automatisent tout produisent des messages génériques, parfois faux, et posent des questions de RGPD.</p>
+      <p>Le besoin : <b>préparer</b> le travail de prospection, pas le remplacer. Trouver des entreprises plausibles, dire pourquoi avec des preuves, proposer un message, et laisser un humain décider.</p>
+    </div>
+  </section>
+
+  <section id="construit">
+    <div class="wrap">
+      <h2><span class="n">02</span>Ce que j'ai construit</h2>
+      <div class="split">
+        <div class="prose">
+          <ul>
+            <li><b>Sourcing</b> depuis l'annuaire public des entreprises, filtré par profil de cible.</li>
+            <li><b>Recherche du site avec preuve</b> : le site n'est retenu que s'il cite le SIREN, ou le nom et le code postal de l'entreprise.</li>
+            <li><b>Lecture respectueuse</b> : robots.txt, une requête par seconde par site, six pages au plus, pages publiques uniquement.</li>
+            <li><b>Signaux sourcés</b> détectés par du code, pas par le modèle : formulaire à imprimer, offre d'emploi administrative, flotte de véhicules… Chaque signal garde son URL et sa citation.</li>
+            <li><b>Qualification par Claude</b> en sortie structurée (schéma zod) : quatre critères notés, chacun justifié par des signaux cités par leur identifiant. Un identifiant inventé fait rejeter la réponse.</li>
+            <li><b>Rédaction</b> d'un email, d'une tâche LinkedIn manuelle ou d'un message de formulaire, puis <b>vérifications automatiques</b> : aucune promesse chiffrée, aucun jargon, aucune formule toute faite, un seul appel à l'action.</li>
+            <li><b>File de validation</b> au clavier : approuver, éditer, régénérer, rejeter, exclure définitivement.</li>
+          </ul>
+        </div>
+        <figure style="margin:0">
+          <a class="shot" href="assets/img/prospection-validation.png"><img src="assets/img/prospection-validation.png" width="1440" height="1358" alt="File de validation : à gauche la fiche d'une entreprise fictive avec son score et ses 9 signaux sourcés, à droite le brouillon d'email et la liste des vérifications automatiques." loading="lazy"></a>
+          <figcaption>La file de validation, sur une base de démonstration fictive (entreprise, personne et domaine inventés).</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section id="architecture">
+    <div class="wrap">
+      <h2><span class="n">03</span>Architecture</h2>
+      <figure>
+        <div class="diagram">
+          <svg viewBox="0 0 900 300" role="img" aria-labelledby="pa-t pa-d">
+            <title id="pa-t">Pipeline de l'agent de prospection</title>
+            <desc id="pa-d">Un worker enchaîne sourcing, recherche du site, lecture, détection de signaux, qualification et rédaction par Claude ; les brouillons arrivent dans une file de validation humaine protégée par la base de données.</desc>
+            <defs>
+              <marker id="bh" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="head" d="M0 0 L10 5 L0 10 z"/></marker>
+              <marker id="bha" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="head-accent" d="M0 0 L10 5 L0 10 z"/></marker>
+            </defs>
+            <rect class="box-dash" x="10" y="20" width="880" height="130" rx="10"/>
+            <text x="24" y="40" class="t-muted">WORKER (processus séparé, file de tâches)</text>
+
+            <rect class="box" x="24" y="56" width="120" height="74" rx="8"/><text x="36" y="84" class="t-head">Sourcing</text><text x="36" y="102" class="t-muted">annuaire public</text><text x="36" y="117" class="t-muted">des entreprises</text>
+            <rect class="box" x="166" y="56" width="120" height="74" rx="8"/><text x="178" y="84" class="t-head">Site</text><text x="178" y="102" class="t-muted">retenu sur</text><text x="178" y="117" class="t-muted">preuve SIREN</text>
+            <rect class="box" x="308" y="56" width="120" height="74" rx="8"/><text x="320" y="84" class="t-head">Lecture</text><text x="320" y="102" class="t-muted">robots.txt,</text><text x="320" y="117" class="t-muted">1 req/s, 6 pages</text>
+            <rect class="box" x="450" y="56" width="120" height="74" rx="8"/><text x="462" y="84" class="t-head">Signaux</text><text x="462" y="102" class="t-muted">règles, URL</text><text x="462" y="117" class="t-muted">et citation</text>
+            <rect class="box-accent" x="592" y="56" width="134" height="74" rx="8"/><text x="604" y="84" class="t-head">Qualification</text><text x="604" y="102" class="t-muted">Claude, schéma zod,</text><text x="604" y="117" class="t-muted">signaux vérifiés</text>
+            <rect class="box-accent" x="748" y="56" width="130" height="74" rx="8"/><text x="760" y="84" class="t-head">Rédaction</text><text x="760" y="102" class="t-muted">Claude + contrôles</text><text x="760" y="117" class="t-muted">automatiques</text>
+
+            <path class="arrow" d="M144 93 H164" marker-end="url(#bh)"/>
+            <path class="arrow" d="M286 93 H306" marker-end="url(#bh)"/>
+            <path class="arrow" d="M428 93 H448" marker-end="url(#bh)"/>
+            <path class="arrow" d="M570 93 H590" marker-end="url(#bh)"/>
+            <path class="arrow" d="M726 93 H746" marker-end="url(#bh)"/>
+
+            <path class="arrow-accent" d="M813 130 V200 H632" marker-end="url(#bha)"/>
+            <rect class="box-accent" x="420" y="178" width="210" height="56" rx="8"/><text x="434" y="202" class="t-head">File de validation</text><text x="434" y="220" class="t-muted">un humain approuve ou non</text>
+            <path class="arrow" d="M420 206 H310" marker-end="url(#bh)"/>
+            <rect class="box" x="100" y="178" width="208" height="56" rx="8"/><text x="114" y="202" class="t-head">Brouillon approuvé, figé</text><text x="114" y="220" class="t-muted">version figée, prête à envoyer</text>
+
+            <rect class="box" x="420" y="250" width="458" height="40" rx="8"/><text x="434" y="275">Base SQLite : journal en ajout seul, déclencheurs qui refusent toute approbation non tracée</text>
+          </svg>
+        </div>
+        <figcaption>Le modèle ne décide jamais seul : il note et rédige à partir de faits déjà vérifiés par du code, et la base refuse toute approbation sans humain.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section id="code">
+    <div class="wrap">
+      <h2><span class="n">04</span>Extrait de code</h2>
+      <div class="prose">
+        <p>La règle « aucun envoi sans validation humaine » n'est pas seulement dans l'interface : elle est écrite dans la base. Même si un chemin de code se trompe, un brouillon ne peut pas passer en « approuvé » sans utilisateur actif et sans trace au journal.</p>
+      </div>
+      <div class="code-head"><span>Migration SQL · garde-fous en base</span><span>SQL</span></div>
+<pre class="code"><code><span class="c">-- Passage en « approved » : utilisateur actif + ligne draft.approve déjà écrite au journal</span>
+<span class="k">CREATE TRIGGER</span> drafts_approve_requires_user <span class="k">BEFORE UPDATE OF</span> status <span class="k">ON</span> drafts
+<span class="k">WHEN</span> NEW.status = <span class="s">'approved'</span> <span class="k">AND</span> OLD.status &lt;&gt; <span class="s">'approved'</span> <span class="k">AND</span> (
+  NEW.approved_by <span class="k">IS NULL</span>
+  <span class="k">OR NOT EXISTS</span> (<span class="k">SELECT</span> 1 <span class="k">FROM</span> users u
+                 <span class="k">WHERE</span> u.id = NEW.approved_by <span class="k">AND</span> u.disabled = 0)
+  <span class="k">OR NOT EXISTS</span> (<span class="k">SELECT</span> 1 <span class="k">FROM</span> audit_log a
+                 <span class="k">WHERE</span> a.action = <span class="s">'draft.approve'</span>
+                   <span class="k">AND</span> a.object_id = <span class="k">CAST</span>(NEW.id <span class="k">AS</span> TEXT)
+                   <span class="k">AND</span> a.user_id = NEW.approved_by)
+)
+<span class="k">BEGIN SELECT</span> RAISE(ABORT, <span class="s">'approbation refusée : utilisateur authentifié et trace au journal requis'</span>); <span class="k">END</span>;</code></pre>
+    </div>
+  </section>
+
+  <section id="resultat">
+    <div class="wrap">
+      <h2><span class="n">05</span>Résultat mesuré</h2>
+      <div class="results">
+        <div class="stat"><b>60</b><span>entreprises sourcées et analysées</span></div>
+        <div class="stat"><b>68</b><span>appels à Claude, tous réussis : 46 qualifications, 22 rédactions</span></div>
+        <div class="stat"><b>60</b><span>brouillons préparés, dont 1 approuvé et 57 en attente</span></div>
+        <div class="stat"><b>93</b><span>tests automatisés, sur données fictives</span></div>
+        <div class="stat"><b>0</b><span>message parti sans validation humaine : c'est verrouillé en base</span></div>
+        <div class="stat"><b>29/09</b><span>mise en pause : crédit API épuisé</span></div>
+      </div>
+      <p class="note warn"><strong>Honnêtement :</strong> le volume est faible. L'agent a surtout prouvé que la chaîne fonctionne de bout en bout, de façon fiable. Il n'a pas encore prouvé qu'il apporte des clients : 57 brouillons attendent toujours une décision. Le coût par appel n'a pas été enregistré (la colonne prévue est restée à zéro).</p>
+    </div>
+  </section>
+
+  <section id="appris">
+    <div class="wrap prose">
+      <h2><span class="n">06</span>Ce que j'ai appris</h2>
+      <ul>
+        <li><b>Le goulot n'était pas la machine, mais la validation.</b> L'agent prépare plus vite que l'équipe ne décide. La prochaine version doit produire moins de brouillons, mieux ciblés, plutôt que plus.</li>
+        <li><b>Mesurer le coût dès le premier appel.</b> Sans coût par qualification, impossible de dire si l'agent est rentable. C'est le premier indicateur à brancher, avant même la mise en production.</li>
+        <li><b>Faire vérifier le modèle par du code.</b> Les signaux sont trouvés par des règles, le modèle ne fait que les interpréter et les citer. C'est ce qui rend ses réponses vérifiables.</li>
+        <li><b>Réutiliser plutôt que recommencer.</b> Cette logique a servi de base à la conception du module Prospection de l'Evolvia Hub.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap case-nav">
+      <a href="transport.html">← Plateforme transport</a>
+      <a href="octagon.html">Octagon Studio →</a>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">Capture faite sur une base de démonstration : entreprise, personne et domaine fictifs. Le dépôt reste privé.</div>
+</footer>
+</body>
+</html>

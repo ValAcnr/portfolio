@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Octagon Studio — Valentin Arcanger</title>
+<meta name="description" content="Étude de cas : un outil de stratégie TikTok et Reels pour un club de sports de combat, avec une analyse rédigée par Claude.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/style.css">
+<script src="assets/theme.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="index.html"><b class="full">Valentin Arcanger</b><b class="short">V. Arcanger</b> <span>· IA &amp; automatisation</span></a>
+    <nav class="nav" aria-label="Navigation principale">
+      <a href="index.html#projets" aria-current="page">Projets</a>
+      <a href="demo.html">Démo</a>
+      <a class="hide-sm" href="index.html#methode">Méthode</a>
+      <a href="index.html#contact">Contact</a>
+    </nav>
+    <button class="theme-btn" type="button" aria-label="Changer de thème"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/></svg></button>
+  </div>
+</header>
+
+<main class="case">
+  <div class="wrap">
+    <div class="case-hero">
+      <span class="eyebrow">Étude de cas 3 · projet en cours</span>
+      <h1>Octagon Studio : transformer des statistiques TikTok en décisions</h1>
+      <p class="lead">Un outil de stratégie vidéo pour un club de sports de combat : il calcule les KPI, note chaque vidéo par rapport aux habitudes du compte, applique 14 règles de recommandation et fait rédiger l'analyse par Claude. Le projet est en discussion avec un club ; il n'est pas encore utilisé.</p>
+      <div class="tags"><span class="tag status">En discussion avec un club · pas encore utilisé</span><span class="tag ai">Claude rédige l'analyse</span><span class="tag">KPI contenu</span><span class="tag">Next.js</span><span class="tag">Prisma</span></div>
+      <dl class="facts">
+        <div><dt>Rôle</dt><dd>Conception et développement</dd></div>
+        <div><dt>Période</dt><dd>Octobre 2026</dd></div>
+        <div><dt>Utilisateurs</dt><dd>Aucun pour l'instant</dd></div>
+        <div><dt>Cadre</dt><dd>Proposition à un club</dd></div>
+      </dl>
+      <nav class="toc" aria-label="Sommaire">
+        <a href="#probleme">Problème</a><a href="#construit">Construit</a><a href="#architecture">Architecture</a><a href="#code">Code</a><a href="#resultat">Résultat</a><a href="#appris">Appris</a>
+      </nav>
+    </div>
+  </div>
+
+  <section id="probleme">
+    <div class="wrap prose">
+      <h2><span class="n">01</span>Le problème métier</h2>
+      <p>Un club de sports de combat veut attirer de nouveaux membres grâce à TikTok et Instagram Reels. Les statistiques existent, dans TikTok Studio et Meta Business Suite, mais personne n'a le temps de les transformer en décisions : quoi publier, quand, avec quel coach, et pourquoi telle vidéo a marché.</p>
+      <p>Contraintes : un gérant non technique, un usage au téléphone, et un sujet juridique réel, le droit à l'image des personnes filmées, mineurs compris.</p>
+    </div>
+  </section>
+
+  <section id="construit">
+    <div class="wrap">
+      <h2><span class="n">02</span>Ce que j'ai construit</h2>
+      <div class="split">
+        <div class="prose">
+          <ul>
+            <li><b>Import</b> des exports TikTok et Instagram (CSV, Excel), colonnes reconnues automatiquement en français et en anglais, doublons écartés.</li>
+            <li><b>KPI</b> sur 7, 28 et 90 jours avec variations, engagement par pilier de contenu et par format.</li>
+            <li><b>Score Algo de 0 à 100</b>, normalisé par la médiane du compte : 50 veut dire « une vidéo normale pour ce compte ». Les pondérations sont réglables.</li>
+            <li><b>14 règles de recommandation</b>, chacune avec le constat chiffré, l'hypothèse et l'action proposée.</li>
+          </ul>
+        </div>
+        <div class="prose">
+          <ul>
+            <li><b>Analyse rédigée par Claude</b> à partir d'un résumé chiffré. Claude écrit, il ne calcule pas : tous les nombres viennent du code. Sans clé API, un repli à base de règles produit le texte : l'outil n'est jamais bloqué.</li>
+            <li><b>Vérification avant publication</b>, avec blocage si une autorisation de droit à l'image manque.</li>
+            <li><b>Production</b> : générateur de scripts, calendrier, bibliothèque de 121 accroches et 157 idées.</li>
+            <li><b>Comptes individuels</b> : administrateur et coachs, droits séparés.</li>
+          </ul>
+        </div>
+      </div>
+      <p class="note"><strong>À essayer :</strong> la <a href="demo.html">démo interactive</a> reproduit le Score Algo et trois des règles sur un jeu de données fictif, et montre le résumé exact que Claude reçoit.</p>
+    </div>
+  </section>
+
+  <section id="architecture">
+    <div class="wrap">
+      <h2><span class="n">03</span>Architecture</h2>
+      <figure>
+        <div class="diagram">
+          <svg viewBox="0 0 900 250" role="img" aria-labelledby="oa-t oa-d">
+            <title id="oa-t">Architecture d'Octagon Studio</title>
+            <desc id="oa-d">Les statistiques importées sont stockées, analysées par un moteur déterministe, puis résumées pour Claude qui rédige l'analyse ; un repli à base de règles prend le relais sans IA.</desc>
+            <defs>
+              <marker id="ch" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="head" d="M0 0 L10 5 L0 10 z"/></marker>
+              <marker id="cha" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="head-accent" d="M0 0 L10 5 L0 10 z"/></marker>
+            </defs>
+            <rect class="box" x="16" y="40" width="150" height="70" rx="8"/><text x="28" y="68" class="t-head">Import</text><text x="28" y="86" class="t-muted">TikTok, Instagram</text><text x="28" y="101" class="t-muted">CSV, Excel, saisie</text>
+            <rect class="box" x="196" y="40" width="130" height="70" rx="8"/><text x="208" y="68" class="t-head">Base</text><text x="208" y="86" class="t-muted">SQLite, Prisma</text>
+            <rect class="box-accent" x="356" y="24" width="200" height="102" rx="8"/><text x="368" y="50" class="t-head">Moteur d'analyse</text><text x="368" y="70" class="t-muted">métriques par vidéo</text><text x="368" y="86" class="t-muted">Score Algo (médiane)</text><text x="368" y="102" class="t-muted">14 règles, heatmap</text><text x="368" y="118" class="t-muted">code déterministe, testé</text>
+            <rect class="box" x="586" y="40" width="130" height="70" rx="8"/><text x="598" y="68" class="t-head">Résumé</text><text x="598" y="86" class="t-muted">chiffré, sans</text><text x="598" y="101" class="t-muted">donnée brute</text>
+            <rect class="box-accent" x="746" y="16" width="140" height="56" rx="8"/><text x="758" y="40" class="t-head">Claude</text><text x="758" y="58" class="t-muted">rédige l'analyse</text>
+            <rect class="box" x="746" y="84" width="140" height="56" rx="8"/><text x="758" y="108" class="t-head">Repli règles</text><text x="758" y="126" class="t-muted">si pas d'IA</text>
+
+            <path class="arrow" d="M166 75 H194" marker-end="url(#ch)"/>
+            <path class="arrow" d="M326 75 H354" marker-end="url(#ch)"/>
+            <path class="arrow" d="M556 75 H584" marker-end="url(#ch)"/>
+            <path class="arrow-accent" d="M716 66 L744 48" marker-end="url(#cha)"/>
+            <path class="arrow" d="M716 86 L744 106" marker-end="url(#ch)"/>
+
+            <rect class="box" x="356" y="170" width="530" height="56" rx="8"/><text x="370" y="194" class="t-head">Tableau de bord, recommandations, rapport mensuel</text><text x="370" y="212" class="t-muted">pensé pour le téléphone, en français, pour un gérant non technique</text>
+            <path class="arrow" d="M456 126 V168" marker-end="url(#ch)"/>
+            <path class="arrow" d="M816 140 V168" marker-end="url(#ch)"/>
+          </svg>
+        </div>
+        <figcaption>Le calcul et la rédaction sont séparés : le modèle ne voit qu'un résumé chiffré et ne produit aucun nombre lui-même.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section id="code">
+    <div class="wrap">
+      <h2><span class="n">04</span>Extrait de code</h2>
+      <div class="prose"><p>Le cœur du Score Algo. Comparer une vidéo à la médiane du compte, plutôt qu'à des seuils fixes, rend le score utile pour un petit compte local comme pour un gros.</p></div>
+      <div class="code-head"><span>Moteur d'analyse · sous-score d'un signal</span><span>TypeScript</span></div>
+<pre class="code"><code><span class="c">// r = valeur de la vidéo / médiane du compte ; sub = 100 × r^k / (r^k + 1), k = 1,5</span>
+<span class="c">// r = 1 (vidéo médiane) → 50 ; r = 2 → 74 ; r = 0,5 → 26 ; r = 0 → 0</span>
+<span class="k">export function</span> subScore(value: number, med: number | <span class="k">null</span>): number {
+  <span class="k">if</span> (med == <span class="k">null</span>) <span class="k">return</span> 50;
+  <span class="k">if</span> (med &lt;= 0) <span class="k">return</span> value &gt; 0 ? 75 : 50;
+  <span class="k">const</span> r = Math.max(0, value) / med;
+  <span class="k">const</span> p = Math.pow(r, SCORE_EXPONENT);
+  <span class="k">return</span> (100 * p) / (p + 1);
+}
+<span class="c">// Le Score Algo est la moyenne pondérée des sous-scores (rétention, partages,</span>
+<span class="c">// enregistrements, abonnés, commentaires, likes), signaux absents exclus.</span></code></pre>
+    </div>
+  </section>
+
+  <section id="resultat">
+    <div class="wrap">
+      <h2><span class="n">05</span>Résultat</h2>
+      <p class="note warn"><strong>Pas encore de résultat d'usage.</strong> L'outil n'est pas utilisé par un club : il n'y a donc aucun chiffre d'adoption ou d'impact à montrer. Ce qui est vérifiable aujourd'hui, c'est ce qui est construit.</p>
+      <div class="results">
+        <div class="stat"><b>14</b><span>règles de recommandation, avec constat, hypothèse et action</span></div>
+        <div class="stat"><b>134</b><span>tests : moteur d'analyse et parcours complets dans un navigateur</span></div>
+        <div class="stat"><b>14</b><span>commits, du 09 au 12/10/2026, conteneur Docker prêt à déployer</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="appris">
+    <div class="wrap prose">
+      <h2><span class="n">06</span>Ce que j'ai appris</h2>
+      <ul>
+        <li><b>Le modèle rédige, le code calcule.</b> Claude reçoit un résumé chiffré et transforme des constats en conseils lisibles. Il ne peut pas inventer un chiffre, parce qu'il n'en produit aucun.</li>
+        <li><b>Prévoir la panne de l'IA dès le départ.</b> Chaque appel peut échouer ou être refusé : l'outil bascule alors sur ses règles, sans écran d'erreur.</li>
+        <li><b>Parler la langue de l'utilisateur.</b> Un gérant de club ne veut pas un « taux d'engagement normalisé » mais « cette vidéo a fait deux fois mieux que d'habitude, refaites ce format ».</li>
+        <li><b>Démontrer avant d'avoir des utilisateurs.</b> Un jeu de démonstration réaliste permet de discuter du produit avec le club sur du concret, sans toucher à ses données.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap case-nav">
+      <a href="prospection.html">← Agent de prospection</a>
+      <a href="evolvia-hub.html">Evolvia Hub →</a>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">Le club n'est pas nommé. Démo et exemples sur données fictives uniquement.</div>
+</footer>
+</body>
+</html>

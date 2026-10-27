@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Evolvia Hub — Valentin Arcanger</title>
+<meta name="description" content="Étude de cas : le hub interne d'Evolvia, projet d'équipe ; conception du module Prospection.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/style.css">
+<script src="assets/theme.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="index.html"><b class="full">Valentin Arcanger</b><b class="short">V. Arcanger</b> <span>· IA &amp; automatisation</span></a>
+    <nav class="nav" aria-label="Navigation principale">
+      <a href="index.html#projets" aria-current="page">Projets</a>
+      <a href="demo.html">Démo</a>
+      <a class="hide-sm" href="index.html#methode">Méthode</a>
+      <a href="index.html#contact">Contact</a>
+    </nav>
+    <button class="theme-btn" type="button" aria-label="Changer de thème"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/></svg></button>
+  </div>
+</header>
+
+<main class="case">
+  <div class="wrap">
+    <div class="case-hero">
+      <span class="eyebrow">Étude de cas 4 · projet d'équipe</span>
+      <h1>Evolvia Hub : des agents IA au service d'une équipe, avec revue humaine</h1>
+      <p class="lead">Le Hub est l'outil interne d'Evolvia, développé avec mes associés. Les associés y confient des missions à des agents IA, et chaque livrable passe par une revue humaine. Ma part : la conception du module Prospection (modèle de données, collecte, scoring), proposée en 2 PR puis reprise par un associé, en m'appuyant sur mon agent de prospection.</p>
+      <div class="tags"><span class="tag status">Projet d'équipe</span><span class="tag ai">Agents délégués</span><span class="tag ai">MCP</span><span class="tag">Next.js</span><span class="tag">Postgres</span><span class="tag">Drizzle</span></div>
+      <dl class="facts">
+        <div><dt>Mon rôle</dt><dd>Conception du module Prospection</dd></div>
+        <div><dt>Période</dt><dd>Octobre 2026</dd></div>
+        <div><dt>Équipe</dt><dd>Les associés d'Evolvia</dd></div>
+        <div><dt>Cadre</dt><dd>Outil interne Evolvia</dd></div>
+      </dl>
+      <nav class="toc" aria-label="Sommaire">
+        <a href="#probleme">Problème</a><a href="#construit">Construit</a><a href="#architecture">Architecture</a><a href="#code">Code</a><a href="#resultat">Résultat</a><a href="#appris">Appris</a>
+      </nav>
+    </div>
+  </div>
+
+  <section id="probleme">
+    <div class="wrap prose">
+      <h2><span class="n">01</span>Le problème métier</h2>
+      <p>Mon agent de prospection fonctionnait seul, à côté des outils de l'équipe. Le Hub d'Evolvia, lui, réunit déjà les missions, les agents et les règles de l'équipe, avec un principe : <b>toute mission confiée à un agent se termine par une revue humaine</b>. Il fallait faire entrer la prospection dans ce cadre commun, au lieu de garder un outil isolé.</p>
+    </div>
+  </section>
+
+  <section id="construit">
+    <div class="wrap">
+      <h2><span class="n">02</span>Ma contribution</h2>
+      <div class="split">
+        <div class="prose">
+          <h3>PR 1 · modèle de données et collecte</h3>
+          <ul>
+            <li>Le schéma du module : entreprises, contacts, sites, pages, signaux, exclusions, et une liste de blocage en ajout seul, protégée par un déclencheur SQL.</li>
+            <li>Un sourcing sur plusieurs profils de cible à la fois, à la demande d'un associé, avec dédoublonnage par SIREN.</li>
+            <li>La recherche de site avec preuve et la lecture respectueuse des sites, reprises de mon agent.</li>
+          </ul>
+        </div>
+        <div class="prose">
+          <h3>PR 2 · scoring par mission déléguée</h3>
+          <ul>
+            <li>Aucun appel direct à un modèle depuis l'application, conformément aux règles du Hub : la qualification est confiée à un agent sous forme de mission.</li>
+            <li>Le livrable de l'agent est validé dès sa soumission : schéma, critères complets, signaux cités existants. L'agent peut corriger et resoumettre.</li>
+            <li>Le score n'est écrit qu'après la validation de la mission par un associé : pas de raccourci pour la prospection.</li>
+          </ul>
+        </div>
+      </div>
+      <p class="note"><strong>Pour être précis :</strong> mes deux PR n'ont pas été fusionnées telles quelles. Un associé a repris la conception et livré le module en production. Le Hub tourne sur le serveur d'un associé ; les autres modules sont le travail de l'équipe.</p>
+    </div>
+  </section>
+
+  <section id="architecture">
+    <div class="wrap">
+      <h2><span class="n">03</span>Architecture du scoring</h2>
+      <figure>
+        <div class="diagram">
+          <svg viewBox="0 0 900 220" role="img" aria-labelledby="ha-t ha-d">
+            <title id="ha-t">Scoring par mission déléguée</title>
+            <desc id="ha-d">Le Hub crée une mission de qualification, un agent soumet un livrable JSON, le Hub le valide, un associé relit la mission, et seulement alors le score est écrit.</desc>
+            <defs>
+              <marker id="dh" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="head" d="M0 0 L10 5 L0 10 z"/></marker>
+              <marker id="dha" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="head-accent" d="M0 0 L10 5 L0 10 z"/></marker>
+            </defs>
+            <rect class="box" x="16" y="40" width="150" height="74" rx="8"/><text x="28" y="66" class="t-head">Mission</text><text x="28" y="84" class="t-muted">dossier de l'entreprise</text><text x="28" y="100" class="t-muted">+ signaux sourcés</text>
+            <rect class="box-accent" x="196" y="40" width="150" height="74" rx="8"/><text x="208" y="66" class="t-head">Agent délégué</text><text x="208" y="84" class="t-muted">prompt versionné,</text><text x="208" y="100" class="t-muted">livrable JSON</text>
+            <rect class="box" x="376" y="40" width="160" height="74" rx="8"/><text x="388" y="66" class="t-head">Validation</text><text x="388" y="84" class="t-muted">schéma zod, critères,</text><text x="388" y="100" class="t-muted">signaux existants</text>
+            <rect class="box-accent" x="566" y="40" width="150" height="74" rx="8"/><text x="578" y="66" class="t-head">Revue humaine</text><text x="578" y="84" class="t-muted">un associé valide</text><text x="578" y="100" class="t-muted">la mission</text>
+            <rect class="box" x="746" y="40" width="140" height="74" rx="8"/><text x="758" y="66" class="t-head">Score écrit</text><text x="758" y="84" class="t-muted">« à valider »</text><text x="758" y="100" class="t-muted">ou archivé</text>
+            <path class="arrow" d="M166 77 H194" marker-end="url(#dh)"/>
+            <path class="arrow" d="M346 77 H374" marker-end="url(#dh)"/>
+            <path class="arrow" d="M536 77 H564" marker-end="url(#dh)"/>
+            <path class="arrow" d="M716 77 H744" marker-end="url(#dh)"/>
+            <path class="arrow-accent" d="M456 114 V160 H271 V116" marker-end="url(#dha)"/>
+            <text x="290" y="178" class="t-muted">refusé : l'agent corrige et resoumet</text>
+          </svg>
+        </div>
+        <figcaption>Le même invariant que pour toutes les missions du Hub : aucune écriture sans revue humaine.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section id="code">
+    <div class="wrap">
+      <h2><span class="n">04</span>Extrait de code</h2>
+      <div class="prose"><p>La règle « pas de signal, pas de point » appliquée au livrable de l'agent. Un seul aller-retour en base vérifie à la fois que chaque signal cité existe et qu'il appartient bien à l'entreprise notée.</p></div>
+      <div class="code-head"><span>Ma PR 2 · validation du livrable de qualification</span><span>TypeScript</span></div>
+<pre class="code"><code><span class="c">// Un score > 0 doit citer au moins un signal_id (pas de signal → pas de point).</span>
+<span class="k">for</span> (<span class="k">const</span> entry <span class="k">of</span> payload.breakdown) {
+  <span class="k">if</span> (entry.raw_score &gt; 0 &amp;&amp; entry.signal_ids.length === 0
+      &amp;&amp; !CRITERIA_WITHOUT_SIGNAL_REQUIREMENT.has(entry.critere)) {
+    <span class="k">return</span> { ok: <span class="k">false</span>, error: <span class="s">`Critère « ${entry.critere} » : un score &gt; 0 doit citer au moins un signal_id.`</span> };
+  }
+}
+<span class="c">// Existence ET appartenance à cette entreprise, en une seule requête.</span>
+<span class="k">const</span> citedIds = [...<span class="k">new</span> Set(payload.breakdown.flatMap((b) =&gt; b.signal_ids))];
+<span class="k">const</span> own = <span class="k">new</span> Set((<span class="k">await</span> db.select({ id: prospectSignals.id }).from(prospectSignals)
+  .where(and(eq(prospectSignals.companyId, companyId), inArray(prospectSignals.id, citedIds))))
+  .map((r) =&gt; r.id));
+<span class="k">for</span> (<span class="k">const</span> id <span class="k">of</span> citedIds) {
+  <span class="k">if</span> (!own.has(id)) <span class="k">return</span> { ok: <span class="k">false</span>, error: <span class="s">`signal_id inexistant ou n'appartenant pas à cette entreprise : ${id}.`</span> };
+}</code></pre>
+    </div>
+  </section>
+
+  <section id="resultat">
+    <div class="wrap">
+      <h2><span class="n">05</span>Résultat</h2>
+      <div class="results">
+        <div class="stat"><b>2</b><span>PR de conception proposées, reprises par un associé</span></div>
+        <div class="stat"><b>32</b><span>tests verts sur la partie base de données de la PR 2, dont 3 sur un vrai Postgres</span></div>
+        <div class="stat"><b>1</b><span>module Prospection livré en production par l'équipe</span></div>
+      </div>
+      <p class="note">Je ne revendique pas le module en production : il a été livré par un associé. Ma contribution est la conception et les deux premières PR qui l'ont préparée.</p>
+    </div>
+  </section>
+
+  <section id="appris">
+    <div class="wrap prose">
+      <h2><span class="n">06</span>Ce que j'ai appris</h2>
+      <ul>
+        <li><b>Respecter les règles d'un système existant.</b> J'aurais pu écrire le score dès la soumission, plus simple. Cela aurait contourné, pour la première fois, la revue humaine de toutes les missions. J'ai choisi de m'y plier et de le signaler comme décision à relire.</li>
+        <li><b>Une PR est aussi un document.</b> Résumé, décision à relire en priorité, limites connues, plan de test : c'est ce qui rend une conception reprenable par quelqu'un d'autre, et c'est ce qui s'est passé.</li>
+        <li><b>Livrer en petites étapes empilées.</b> Données et collecte d'abord, scoring ensuite : chaque PR se relit seule.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap case-nav">
+      <a href="octagon.html">← Octagon Studio</a>
+      <a href="index.html#methode">Comment je travaille →</a>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">Projet d'équipe Evolvia. Le dépôt est privé ; l'extrait vient de ma propre PR.</div>
+</footer>
+</body>
+</html>

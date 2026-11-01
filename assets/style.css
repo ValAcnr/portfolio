@@ -265,6 +265,19 @@ pre.code .s { color: var(--warn); }
 .note.warn { background: var(--warn-soft); border-color: color-mix(in srgb, var(--warn) 30%, transparent); }
 .note strong { color: var(--text); }
 
+.integrations { display: grid; gap: 12px; margin-top: 16px; }
+@media (min-width: 860px) { .integrations { grid-template-columns: repeat(2, 1fr); } }
+.integ {
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 16px; box-shadow: var(--shadow);
+}
+.integ.files { background: var(--surface-2); box-shadow: none; }
+.integ-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 12px; }
+.integ h3 { margin: 0; font-size: 1rem; }
+.integ dl { margin: 10px 0 0; display: grid; gap: 8px; }
+.integ dt { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); font-weight: 600; }
+.integ dd { margin: 2px 0 0; font-size: 0.92rem; line-height: 1.5; }
+
 .shot { border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: var(--surface); }
 
 .case-nav { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }

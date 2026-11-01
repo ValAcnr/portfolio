@@ -37,7 +37,7 @@
         <div><dt>Cadre</dt><dd>Outil interne Evolvia</dd></div>
       </dl>
       <nav class="toc" aria-label="Sommaire">
-        <a href="#probleme">Problème</a><a href="#construit">Construit</a><a href="#architecture">Architecture</a><a href="#code">Code</a><a href="#resultat">Résultat</a><a href="#appris">Appris</a>
+        <a href="#probleme">Problème</a><a href="#construit">Construit</a><a href="#architecture">Architecture</a><a href="#integrations">Intégrations</a><a href="#code">Code</a><a href="#resultat">Résultat</a><a href="#appris">Appris</a>
       </nav>
     </div>
   </div>
@@ -104,9 +104,53 @@
     </div>
   </section>
 
+  <section id="integrations">
+    <div class="wrap">
+      <h2><span class="n">04</span>Sources de données et intégrations</h2>
+      <div class="prose">
+        <p>Les sources branchées par mes deux PR. Elles n'ont pas été fusionnées telles quelles : c'est l'état de ma conception, pas celui du module en production.</p>
+      </div>
+      <div class="integrations">
+        <article class="integ">
+          <div class="integ-head"><h3>API Recherche d'entreprises</h3><span class="tag">API REST publique</span></div>
+          <dl>
+            <div><dt>Apporte</dt><dd>Les entreprises actives, filtrées par activité, département, tranche d'effectif et catégorie, avec leur SIREN et leur adresse.</dd></div>
+            <div><dt>Méthode</dt><dd>API REST de l'État, sans clé, réponses validées par un schéma zod.</dd></div>
+            <div><dt>Problème résolu</dt><dd><b>Sourcing sur plusieurs profils</b> de cible à la fois, dédoublonné par SIREN ; pagination et attente sur 429 reprises de mon agent.</dd></div>
+          </dl>
+        </article>
+        <article class="integ">
+          <div class="integ-head"><h3>Brave Search</h3><span class="tag">API REST · clé</span></div>
+          <dl>
+            <div><dt>Apporte</dt><dd>Les adresses candidates pour le site de chaque entreprise.</dd></div>
+            <div><dt>Méthode</dt><dd>API REST de recherche web, à débit limité.</dd></div>
+            <div><dt>Problème résolu</dt><dd><b>Rapprochement</b> : site retenu seulement sur preuve (SIREN, ou nom et code postal cités).</dd></div>
+          </dl>
+        </article>
+        <article class="integ">
+          <div class="integ-head"><h3>Sites web publics des entreprises</h3><span class="tag">HTTP</span></div>
+          <dl>
+            <div><dt>Apporte</dt><dd>Les pages publiques d'où sont tirés les signaux sourcés de chaque dossier.</dd></div>
+            <div><dt>Méthode</dt><dd>Lecture HTTP respectueuse, reprise de mon agent.</dd></div>
+            <div><dt>Problème résolu</dt><dd>robots.txt, une requête par seconde par domaine, adresses privées refusées.</dd></div>
+          </dl>
+        </article>
+        <article class="integ">
+          <div class="integ-head"><h3>Agents délégués · MCP du Hub</h3><span class="tag ai">MCP</span></div>
+          <dl>
+            <div><dt>Apporte</dt><dd>La qualification de chaque entreprise, faite par un agent et non par l'application.</dd></div>
+            <div><dt>Méthode</dt><dd>L'agent reçoit une mission et remet son livrable par un outil MCP du Hub (<code>mission_submit_deliverable</code>).</dd></div>
+            <div><dt>Problème résolu</dt><dd><b>Aucun appel direct à un modèle</b>, conformément aux règles du Hub. Le livrable est validé dès sa soumission (schéma, critères complets, signaux cités existants) et le score n'est écrit qu'après la revue d'un associé.</dd></div>
+          </dl>
+        </article>
+      </div>
+      <p class="note"><strong>Pour être précis :</strong> le module en production a été livré par un associé à partir de cette conception.</p>
+    </div>
+  </section>
+
   <section id="code">
     <div class="wrap">
-      <h2><span class="n">04</span>Extrait de code</h2>
+      <h2><span class="n">05</span>Extrait de code</h2>
       <div class="prose"><p>La règle « pas de signal, pas de point » appliquée au livrable de l'agent. Un seul aller-retour en base vérifie à la fois que chaque signal cité existe et qu'il appartient bien à l'entreprise notée.</p></div>
       <div class="code-head"><span>Ma PR 2 · validation du livrable de qualification</span><span>TypeScript</span></div>
 <pre class="code"><code><span class="c">// Un score > 0 doit citer au moins un signal_id (pas de signal → pas de point).</span>
@@ -129,7 +173,7 @@
 
   <section id="resultat">
     <div class="wrap">
-      <h2><span class="n">05</span>Résultat</h2>
+      <h2><span class="n">06</span>Résultat</h2>
       <div class="results">
         <div class="stat"><b>2</b><span>PR de conception proposées, reprises par un associé</span></div>
         <div class="stat"><b>32</b><span>tests verts sur la partie base de données de la PR 2, dont 3 sur un vrai Postgres</span></div>
@@ -141,7 +185,7 @@
 
   <section id="appris">
     <div class="wrap prose">
-      <h2><span class="n">06</span>Ce que j'ai appris</h2>
+      <h2><span class="n">07</span>Ce que j'ai appris</h2>
       <ul>
         <li><b>Respecter les règles d'un système existant.</b> J'aurais pu écrire le score dès la soumission, plus simple. Cela aurait contourné, pour la première fois, la revue humaine de toutes les missions. J'ai choisi de m'y plier et de le signaler comme décision à relire.</li>
         <li><b>Une PR est aussi un document.</b> Résumé, décision à relire en priorité, limites connues, plan de test : c'est ce qui rend une conception reprenable par quelqu'un d'autre, et c'est ce qui s'est passé.</li>

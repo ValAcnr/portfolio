@@ -37,7 +37,7 @@
         <div><dt>Cadre</dt><dd>Mission pour l'entreprise</dd></div>
       </dl>
       <nav class="toc" aria-label="Sommaire">
-        <a href="#probleme">Problème</a><a href="#construit">Construit</a><a href="#architecture">Architecture</a><a href="#code">Code</a><a href="#resultat">Résultat</a><a href="#appris">Appris</a>
+        <a href="#probleme">Problème</a><a href="#construit">Construit</a><a href="#architecture">Architecture</a><a href="#integrations">Intégrations</a><a href="#code">Code</a><a href="#resultat">Résultat</a><a href="#appris">Appris</a>
       </nav>
     </div>
   </div>
@@ -91,9 +91,9 @@
       <h2><span class="n">03</span>Architecture</h2>
       <figure>
         <div class="diagram">
-          <svg viewBox="0 0 900 440" role="img" aria-labelledby="arch-t arch-d">
+          <svg viewBox="0 0 900 510" role="img" aria-labelledby="arch-t arch-d">
             <title id="arch-t">Architecture de la plateforme</title>
-            <desc id="arch-d">Les utilisateurs métier accèdent à la plateforme, qui lit et écrit dans les classeurs Excel, la GED et l'API GPS, et interroge le SIRH via le serveur MCP. Claude accède aussi au serveur MCP via OAuth.</desc>
+            <desc id="arch-d">Les utilisateurs métier accèdent à la plateforme. Elle lit et écrit les classeurs Excel, la GED SharePoint et les brouillons Outlook via Microsoft Graph, interroge l'API de télématique Optimum Automotive, importe les exports de cartes carburant, envoie ses alertes par Gmail et interroge le SIRH Eurecia via le serveur MCP. Claude n'accède qu'au serveur MCP, via OAuth et PKCE.</desc>
             <defs>
               <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="head" d="M0 0 L10 5 L0 10 z"/></marker>
               <marker id="aha" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="head-accent" d="M0 0 L10 5 L0 10 z"/></marker>
@@ -110,7 +110,7 @@
             <path class="arrow" d="M190 188 H258" marker-end="url(#ah)"/>
             <path class="arrow" d="M190 248 H258" marker-end="url(#ah)"/>
 
-            <rect class="box-accent" x="260" y="36" width="340" height="300" rx="10"/>
+            <rect class="box-accent" x="260" y="36" width="340" height="364" rx="10"/>
             <text x="280" y="62" class="t-head">Plateforme d'exploitation</text>
             <text x="280" y="79" class="t-muted">Node.js / Express · 174 routes · rôles par module</text>
             <rect class="box" x="280" y="94" width="145" height="40" rx="6"/><text x="292" y="119">Tournées</text>
@@ -121,33 +121,97 @@
             <rect class="box" x="437" y="194" width="145" height="40" rx="6"/><text x="449" y="219">Signalements</text>
             <rect class="box" x="280" y="260" width="302" height="56" rx="6"/><text x="292" y="284" class="t-head">16 tâches planifiées</text><text x="292" y="302" class="t-muted">contrôles quotidiens → alertes mail</text>
 
-            <text x="670" y="28" class="t-muted">SYSTÈMES</text>
-            <rect class="box" x="670" y="44" width="210" height="44" rx="8"/><text x="684" y="71">Classeurs Excel maîtres</text>
-            <rect class="box" x="670" y="100" width="210" height="44" rx="8"/><text x="684" y="127">GED (SharePoint, Graph)</text>
-            <rect class="box" x="670" y="156" width="210" height="44" rx="8"/><text x="684" y="183">API GPS de la flotte</text>
-            <rect class="box-accent" x="670" y="226" width="210" height="56" rx="8"/><text x="684" y="250" class="t-head">Serveur MCP RH</text><text x="684" y="268" class="t-muted">11 outils · lecture seule</text>
-            <rect class="box" x="670" y="330" width="210" height="44" rx="8"/><text x="684" y="357">SIRH de l'entreprise</text>
+            <text x="670" y="28" class="t-muted">SOURCES ET INTÉGRATIONS</text>
+            <rect class="box" x="670" y="40" width="210" height="48" rx="8"/><text x="684" y="60" class="t-head">Classeurs Excel maîtres</text><text x="684" y="77" class="t-muted">fichiers .xlsx · lecture, écriture</text>
+            <rect class="box" x="670" y="98" width="210" height="48" rx="8"/><text x="684" y="118" class="t-head">Microsoft 365 · Graph</text><text x="684" y="135" class="t-muted">GED SharePoint, Outlook</text>
+            <rect class="box" x="670" y="156" width="210" height="48" rx="8"/><text x="684" y="176" class="t-head">Optimum Automotive</text><text x="684" y="193" class="t-muted">API REST · GPS et flotte</text>
+            <rect class="box" x="670" y="214" width="210" height="48" rx="8"/><text x="684" y="234" class="t-head">Gmail (SMTP)</text><text x="684" y="251" class="t-muted">alertes et récaps quotidiens</text>
+            <rect class="box" x="670" y="272" width="210" height="48" rx="8"/><text x="684" y="292" class="t-head">Exports cartes carburant</text><text x="684" y="309" class="t-muted">fichier Excel importé</text>
+            <rect class="box-accent" x="670" y="346" width="210" height="56" rx="8"/><text x="684" y="370" class="t-head">Serveur MCP RH</text><text x="684" y="388" class="t-muted">11 outils · lecture seule</text>
+            <rect class="box" x="670" y="440" width="210" height="48" rx="8"/><text x="684" y="460" class="t-head">Eurecia (SIRH)</text><text x="684" y="477" class="t-muted">API REST · jeton de session</text>
 
-            <path class="arrow" d="M602 66 H668" marker-start="url(#ah)" marker-end="url(#ah)"/>
-            <path class="arrow" d="M602 122 H668" marker-end="url(#ah)"/>
-            <path class="arrow" d="M602 178 H668" marker-end="url(#ah)"/>
-            <path class="arrow-accent" d="M602 254 H668" marker-end="url(#aha)"/>
-            <text x="606" y="246" class="t-muted">jeton</text>
-            <path class="arrow" d="M775 282 V328" marker-end="url(#ah)"/>
+            <path class="arrow" d="M602 64 H668" marker-start="url(#ah)" marker-end="url(#ah)"/>
+            <path class="arrow" d="M602 122 H668" marker-start="url(#ah)" marker-end="url(#ah)"/>
+            <path class="arrow" d="M602 180 H668" marker-start="url(#ah)" marker-end="url(#ah)"/>
+            <path class="arrow" d="M602 238 H668" marker-end="url(#ah)"/>
+            <path class="arrow" d="M668 296 H602" marker-end="url(#ah)"/>
+            <path class="arrow-accent" d="M602 374 H668" marker-end="url(#aha)"/>
+            <text x="606" y="366" class="t-muted">jeton</text>
+            <path class="arrow" d="M775 402 V438" marker-end="url(#ah)"/>
 
-            <rect class="box" x="380" y="376" width="220" height="48" rx="8"/><text x="394" y="398" class="t-head">Claude (connecteur)</text><text x="394" y="415" class="t-muted">questions RH en langage naturel</text>
-            <path class="arrow-accent" d="M600 400 H640 V268 H668" marker-end="url(#aha)"/>
-            <text x="606" y="392" class="t-muted">OAuth + PKCE</text>
+            <rect class="box" x="300" y="440" width="220" height="48" rx="8"/><text x="314" y="462" class="t-head">Claude (connecteur)</text><text x="314" y="479" class="t-muted">questions RH en langage naturel</text>
+            <path class="arrow-accent" d="M520 464 H640 V390 H668" marker-end="url(#aha)"/>
+            <text x="530" y="456" class="t-muted">OAuth + PKCE</text>
           </svg>
         </div>
-        <figcaption>Les données restent dans les systèmes de l'entreprise : la plateforme les lit et les écrit, le serveur MCP n'expose le SIRH qu'en lecture.</figcaption>
+        <figcaption>Les données restent dans les systèmes de l'entreprise : la plateforme les lit et les écrit. Claude ne voit que le SIRH, à travers le serveur MCP et en lecture seule.</figcaption>
       </figure>
+    </div>
+  </section>
+
+  <section id="integrations">
+    <div class="wrap">
+      <h2><span class="n">04</span>Sources de données et intégrations</h2>
+      <div class="prose">
+        <p>Inventaire tiré du code : <b>4 services externes</b> appelés par API en production, et <b>2 sources par fichier</b>. Pour chacune, ce qu'elle apporte, comment elle est branchée, et le problème technique qu'il a fallu régler.</p>
+      </div>
+      <div class="integrations">
+        <article class="integ">
+          <div class="integ-head"><h3>Eurecia · SIRH</h3><span class="tag ai">MCP · API REST</span></div>
+          <dl>
+            <div><dt>Apporte</dt><dd>Salariés, absences et congés, feuilles de temps, planning. En lecture seule.</dd></div>
+            <div><dt>Méthode</dt><dd>L'API REST d'Eurecia est enveloppée par mon serveur MCP (JSON-RPC <code>tools/call</code>). La plateforme et Claude passent tous les deux par lui, jamais directement par l'API.</dd></div>
+            <div><dt>Problème résolu</dt><dd><b>Authentification</b> à deux étages : le serveur échange sa clé contre un jeton de session de 25 minutes, renouvelé automatiquement ; ses propres clients présentent un jeton de service ou passent par OAuth. <b>Pagination</b> : l'API rend 50 salariés par page, un outil dédié parcourt toutes les pages pour couvrir tout l'effectif. <b>Rapprochement</b> : le SIRH mélange comptes de personnes et comptes de tournées ; chaque absence est rattachée d'abord à une tournée, sinon à une personne par comparaison de noms tolérante.</dd></div>
+          </dl>
+        </article>
+        <article class="integ">
+          <div class="integ-head"><h3>Optimum Automotive · télématique</h3><span class="tag">API REST · OAuth 2</span></div>
+          <dl>
+            <div><dt>Apporte</dt><dd>Le GPS de la flotte : trajets de chaque véhicule, registre des véhicules et kilométrages, fiches conducteurs, lignes de coût. En écriture, la fiche conducteur d'un nouvel intérimaire est créée automatiquement.</dd></div>
+            <div><dt>Méthode</dt><dd>API REST, OAuth 2 en <i>client credentials</i>. Synchronisation chaque nuit, plus des appels à la demande.</dd></div>
+            <div><dt>Problème résolu</dt><dd><b>Quotas</b> : un délai minimal par point d'accès et une reprise sur erreur 429 qui respecte <code>Retry-After</code> ; la synchro de nuit interroge ~300 véhicules un par un en une douzaine de minutes. <b>Absence de donnée ≠ zéro</b> : un véhicule dont l'appel a échoué est marqué «&nbsp;non scanné&nbsp;», jamais «&nbsp;immobile&nbsp;». <b>Rapprochement</b> : noms GPS et noms des feuilles d'heures comparés malgré l'ordre des mots et les fautes de frappe ; plaques saisies à la main vérifiées contre la flotte, avec une réponse à trois états (connue, inconnue, indéterminée).</dd></div>
+          </dl>
+        </article>
+        <article class="integ">
+          <div class="integ-head"><h3>Microsoft 365 · Graph</h3><span class="tag">Graph · OAuth 2</span></div>
+          <dl>
+            <div><dt>Apporte</dt><dd>La GED SharePoint : contrats des intérimaires, dossiers véhicules, archives des signalements et exports paie. Dans Outlook, les brouillons du récap hebdomadaire de chaque agence d'intérim.</dd></div>
+            <div><dt>Méthode</dt><dd>API Microsoft Graph, OAuth 2 en mode application, jeton mis en cache et renouvelé avant expiration.</dd></div>
+            <div><dt>Problème résolu</dt><dd><b>Pagination</b> : les dossiers sont listés en suivant <code>@odata.nextLink</code>, avec <code>$select</code> pour ne ramener que le nom et le type. <b>Rapprochement</b> : les noms des fichiers de contrats sont saisis à la main et leur orthographe varie ; le bon contrat est retrouvé par distance d'édition. Les brouillons ne partent jamais seuls : une personne relit et envoie.</dd></div>
+          </dl>
+        </article>
+        <article class="integ">
+          <div class="integ-head"><h3>Envoi de mails · Gmail</h3><span class="tag">SMTP</span></div>
+          <dl>
+            <div><dt>Apporte</dt><dd>Les alertes et récaps des tâches planifiées : tournée non saisie, contrôle GPS du matin, dépassement d'horaire, échéances.</dd></div>
+            <div><dt>Méthode</dt><dd>SMTP via Nodemailer, avec un mot de passe d'application.</dd></div>
+            <div><dt>Problème résolu</dt><dd><b>Idempotence</b> : l'alerte de dépassement d'horaire est envoyée une seule fois par personne et par jour, même si la tâche repasse. <b>Contrôle</b> : chaque type de mail a son interrupteur de configuration (12 au total), pour couper un envoi sans redéployer.</dd></div>
+          </dl>
+        </article>
+        <article class="integ files">
+          <div class="integ-head"><h3>Classeurs Excel maîtres</h3><span class="tag status">Fichier</span></div>
+          <dl>
+            <div><dt>Apporte</dt><dd>Le suivi mensuel des tournées, que l'exploitation continue d'utiliser.</dd></div>
+            <div><dt>Méthode</dt><dd>Lecture et écriture de fichiers .xlsx (Python avec openpyxl, Node.js avec ExcelJS).</dd></div>
+            <div><dt>Problème résolu</dt><dd>Le classeur du mois est créé automatiquement à partir du précédent, sans casser ses formules matricielles ; chaque saisie retrouve sa ligne par la référence de la tournée.</dd></div>
+          </dl>
+        </article>
+        <article class="integ files">
+          <div class="integ-head"><h3>Exports de cartes carburant</h3><span class="tag status">Fichier</span></div>
+          <dl>
+            <div><dt>Apporte</dt><dd>Les pleins par véhicule, qui alimentent l'alerte de consommation (kilomètres parcourus entre deux pleins).</dd></div>
+            <div><dt>Méthode</dt><dd>Import d'un export Excel.</dd></div>
+            <div><dt>Problème résolu</dt><dd>Deux formats d'export coexistent : la ligne d'en-tête est détectée dynamiquement (l'un des formats commence par un bandeau de quatre lignes) et les colonnes sont reconnues par alias.</dd></div>
+          </dl>
+        </article>
+      </div>
+      <p class="note"><strong>Où passe Claude ?</strong> Uniquement par le serveur MCP, vers le SIRH, en lecture seule. Les autres sources ne sont accessibles qu'à la plateforme.</p>
     </div>
   </section>
 
   <section id="code">
     <div class="wrap">
-      <h2><span class="n">04</span>Extraits de code</h2>
+      <h2><span class="n">05</span>Extraits de code</h2>
       <div class="prose">
         <p>Deux extraits courts. Le premier vient d'un incident réel : renvoyer une journée de tournées avec une seule ligne remplie effaçait les autres sans prévenir. Les saisies ont été restaurées, puis le serveur a reçu ce contrôle.</p>
       </div>
@@ -180,7 +244,7 @@ json(res, 200, delivrer(entree.clientId)); <span class="c">// jetons stockés so
 
   <section id="resultat">
     <div class="wrap">
-      <h2><span class="n">05</span>Résultat mesuré</h2>
+      <h2><span class="n">06</span>Résultat mesuré</h2>
       <div class="results">
         <div class="stat"><b>794</b><span>saisies de tournées depuis le 01/07/2026</span></div>
         <div class="stat"><b>266</b><span>feuilles d'heures d'intérimaires signées sur mobile</span></div>
@@ -196,7 +260,7 @@ json(res, 200, delivrer(entree.clientId)); <span class="c">// jetons stockés so
 
   <section id="appris">
     <div class="wrap prose">
-      <h2><span class="n">06</span>Ce que j'ai appris</h2>
+      <h2><span class="n">07</span>Ce que j'ai appris</h2>
       <ul>
         <li><b>Un garde-fou côté serveur vaut mieux qu'une consigne.</b> Le formulaire empêchait déjà la plupart des erreurs ; c'est le contrôle serveur qui protège contre le formulaire resté en cache sur un téléphone.</li>
         <li><b>Un calcul qui fait foi doit vivre à un seul endroit.</b> Les heures supplémentaires sont calculées par un seul module, que la page, le récap et l'export réutilisent. Deux copies finissent toujours par diverger, et c'est la paie qui le paie.</li>
